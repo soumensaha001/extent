@@ -5,7 +5,50 @@ metadata:
   labels:
     account: extent
 ---
+apiVersion: apps/v1FROM amazoncorretto:11-alpine-jdk
+MAINTAINER Soumen
+COPY target/klov-0.0.1-SNAPSHOT.jar klov-0.0.1-SNAPSHOT.jar
+ENTRYPOINT ["java","-jar","/klov-0.0.1-SNAPSHOT.jar"]
+
 apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extent
+spec:
+  selector:
+    matchLabels:
+      app: extent
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: extent
+    spec:
+      containers:
+      - name: extent
+        image: sousaha/extent:latest
+        imagePullPolicy: Always
+        ports:
+        - name: sbapp
+          containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: extent-lb
+  labels:
+    app: extent
+  annotations:
+    service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "100"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+  selector:
+    app: extent
 kind: Deployment
 metadata:
   name: extent-v1

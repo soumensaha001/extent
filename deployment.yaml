@@ -30,7 +30,7 @@ spec:
         image: sousaha/extent:latest  
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+        - containerPort: 8090
         volumeMounts:
         - name: tmp
           mountPath: /tmp

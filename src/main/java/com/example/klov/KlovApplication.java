@@ -45,12 +45,17 @@ public class KlovApplication {
 		test = report.startTest(testcasename);
 		for (int i=0;i<steps.size();i++)
 		{
+			
 			org.json.simple.JSONObject stepObject=(org.json.simple.JSONObject)steps.get(i);
+			String screenshotPath=System.getProperty("user.dir")+"/src/main/resources/template/"+stepObject.get("screenshot").toString();
 			if(stepObject.get("status").toString().equalsIgnoreCase("Pass")) {
 				test.log(LogStatus.PASS,stepObject.get("description").toString());
+				test.log(LogStatus.PASS,test.addScreenCapture(screenshotPath));
 			}
 			else {
+				
 				test.log(LogStatus.FAIL, stepObject.get("description").toString());
+				test.log(LogStatus.FAIL,test.addScreenCapture(screenshotPath));
 			}
 			
 		}
